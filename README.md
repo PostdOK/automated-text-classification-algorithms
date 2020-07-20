@@ -11,6 +11,12 @@ To apply certain machine learning approaches for automated text classifying in R
 * Random forest (binary and multi-class)
 * gradient boosting for decision trees (binary and multiclass)
 
+Each script is organized as follows:
+* required libraries
+* Preprocessing
+* Training 
+* Model evaluation 
+
 ## Further Notes
 **Important:** Cross-validation is heavily recommended for all approaches
 

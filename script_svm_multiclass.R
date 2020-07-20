@@ -21,7 +21,6 @@ DTM.df <- as.data.frame(as.matrix(rawDTM))
 colnames(DTM.df) <-
   make.names(colnames(DTM.df), unique = TRUE)
 TrainingDTM <- cbind(Coding = TrainingData$Sentiment, DTM.df)
-
 #draw samples
 id_train <-
   sample(1:nrow(TrainingDTM), round(0.75 * nrow(TrainingDTM), 0), replace = FALSE)

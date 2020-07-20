@@ -13,6 +13,7 @@ id_train <- sample(1:nrow(TrainingData), round(0.75*nrow(TrainingData),0), repla
 #add ids for corpus
 docvars(TrainingDataCorpus, "id_numeric") <- 1:ndoc(TrainingDataCorpus)
 #draw the samples and preprocess the corpora. In this case words are stemmed and converted to lower case. Punctuation and numbers are removed.
+#Using quanteda, this can be done while creating a document term matrix, which is needed for running the algorithms
 TrainingDTM<-corpus_subset(TrainingDataCorpus,id_numeric %in% id_train) %>%
   dfm(stem=TRUE,remove_punct=TRUE, tolower=TRUE, remove_numbers=TRUE)
 TestDTM<-corpus_subset(TrainingDataCorpus,!id_numeric %in% id_train) %>%
@@ -33,7 +34,7 @@ actual_class <- docvars(matchedDFM, "Sentiment")
 #Create contingency table and confusion matrix
 conTable <- table(actual_class, predicted_class)
 cm<-confusionMatrix(conTable,mode = "everything")
-#Calculate Krippendorffs Alpha, espeically for ordered classes
+#Calculate Krippendorffs Alpha, especially for ordered classes
 predicted_class<-as.numeric(predicted_class)-2
 for_kripp<-as.matrix(rbind(predicted_class,actual_class))
 krippends<-kripp.alpha(for_kripp,'ordinal')

@@ -1,4 +1,5 @@
 library(quanteda)
+library(quanteda.textmodels)
 library(caret)
 library(irr)
 

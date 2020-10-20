@@ -13,7 +13,7 @@ id_train <- sample(1:nrow(TrainingData), round(0.75*nrow(TrainingData),0), repla
 #add ids for corpus
 docvars(TrainingDataCorpus, "id_numeric") <- 1:ndoc(TrainingDataCorpus)
 #draw the samples and preprocess the corpora. In this case words are stemmed and converted to lower case. Punctuation and numbers are removed.
-#Using quanteda, this can be done while creating a document term matrix, which is needed for running the algorithms
+#Using quanteda, this can be done while creating a document feature matrix, which is needed for running the algorithms
 TrainingDTM<-corpus_subset(TrainingDataCorpus,id_numeric %in% id_train) %>%
   dfm(stem=TRUE,remove_punct=TRUE, tolower=TRUE, remove_numbers=TRUE)
 TestDTM<-corpus_subset(TrainingDataCorpus,!id_numeric %in% id_train) %>%

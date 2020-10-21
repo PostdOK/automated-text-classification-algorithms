@@ -25,16 +25,14 @@ TestDTM<-corpus_subset(TrainingDataCorpus,!id_numeric %in% id_train) %>%
 #Train the model to classify into your coding variable (in this case called "Sentiment")
 nbModel<-textmodel_nb(TrainingDTM,docvars(TrainingDTM,"Sentiment"))
 #Use the model to classify the test data. dfm_match necessary to have the same features for both document-feature matrixes.
-matchedDFM <- dfm_match(TestDTM, features = featnames(TrainingDTM))
-predicted_class <- predict(nbModel, newdata = matchedDFM)
+predicted_class <- predict(nbModel, newdata = dfm_match(TestDTM, features = featnames(TrainingDTM)))
 
 #Evaluate the model
 #
 #Get real values
-actual_class <- docvars(matchedDFM, "Sentiment")
+actual_class <- docvars(TestDTM, "Sentiment")
 #Create contingency table and confusion matrix
-conTable <- table(actual_class, predicted_class)
-cm<-confusionMatrix(conTable,mode = "everything")
+cm<-confusionMatrix(table(actual_class, predicted_class),mode = "everything")
 #Calculate Krippendorffs Alpha, especially for ordered classes
 predicted_class<-as.numeric(predicted_class)-2
 for_kripp<-as.matrix(rbind(predicted_class,actual_class))

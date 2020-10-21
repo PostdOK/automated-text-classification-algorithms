@@ -14,11 +14,11 @@ TrainingDataCorpus <- tm_map(TrainingDataCorpus, stemDocument)
 TrainingDataCorpus <-
   tm_map(TrainingDataCorpus, removeWords, stopwords_complete)
 TrainingDataCorpus <- tm_map(TrainingDataCorpus, removeNumbers)
-#Conver to document term matrix and then to a data frame that can be handeled by classification algorithms
-rawDTM <- DocumentTermMatrix(TrainingDataCorpus)
-DTM.df <- as.data.frame(as.matrix(rawDTM))
-colnames(DTM.df) <-
-  make.names(colnames(DTM.df), unique = TRUE)
+#Convert to document term matrix as data frame so that it can be handeled by classification algorithms
+DTM.df <- as.data.frame(as.matrix(DocumentTermMatrix(TrainingDataCorpus))
+#In rare cases you might need this step as well                    
+#colnames(DTM.df) <-
+#  make.names(colnames(DTM.df), unique = TRUE)
 TrainingDTM <- cbind(Coding = TrainingData$VAR, DTM.df)
 
 #draw samples
@@ -40,5 +40,4 @@ predicted_class <- predict(SVMmodel, na.omit(TestDTM))
 #Get real values
 actual_class <- TestDTM$Coding
 #Create contingency table and confusion matrix
-conTable <- table(actual_class, predicted_class)
-cm <- confusionMatrix(conTable, mode = "everything")
+cm <- confusionMatrix(table(actual_class, predicted_class), mode = "everything")

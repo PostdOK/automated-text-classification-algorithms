@@ -15,15 +15,14 @@ TrainingDataCorpus <-
   tm_map(TrainingDataCorpus, removeWords, stopwords_complete)
 TrainingDataCorpus <- tm_map(TrainingDataCorpus, removeNumbers)
 #Conver to document term matrix and then to a data frame that can be handeled by classification algorithms
-rawDTM <- DocumentTermMatrix(TrainingDataCorpus)
-DTMmatrix <- as.matrix(rawDTM)
+DTMmatrix <- as.matrix(DocumentTermMatrix(TrainingDataCorpus))
 
 #draw samples
 set.seed(300)
 id_train <- sample(1:nrow(TrainingData), round(0.75*nrow(TrainingData),0), replace = FALSE)
 TrainingData_xgb <- DTMmatrix[id_train, ]
 TestData_xgb <- DTMmatrix[-id_train, ]
-#Get training values
+#Get training values (should be numeric)
 TrainingValues <- TrainingData$VAR[id_train]
 
 #Train the model and make predictions
@@ -33,8 +32,6 @@ TrainingValues <- TrainingData$VAR[id_train]
 tuning <- list(
   eta = .2,
   max_depth = 10,
-  min_child_weight = 1,
-  subsample = 1,
   colsample_bytree = 0.1
 )
 #Train the model to classify into your coding variable (in this case called "VAR")
@@ -56,5 +53,4 @@ predicted_class <- as.numeric(predicted_class_raw > 0.5)
 #Get real values
 actual_class <- TrainingData$VAR[-id_train]
 #Create contingency table and confusion matrix
-conTable <- table(actual_class, predicted_class)
-cm <- confusionMatrix(conTable, mode = "everything")
+cm <- confusionMatrix(table(actual_class, predicted_class), mode = "everything")

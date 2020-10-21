@@ -1,5 +1,4 @@
 library(tm)
-library(dplyr)
 library(xgboost)
 library(caret)
 library(irr)
@@ -34,8 +33,6 @@ TrainingValues <- TrainingData$Sentiment[id_train]+1
 tuning <- list(
   eta = .2,
   max_depth = 10,
-  min_child_weight = 1,
-  subsample = 1,
   colsample_bytree = 0.1
 )
 #Train the model to classify into your coding variable (in this case called "VAR")
@@ -52,18 +49,17 @@ XGBmodel <-
 #Use the model to classify the test data. Here, the class with the highest probability gets extracted.
 #Here, the actual values for each prediction are added as well
 predicted_class_raw <- predict(XGBmodel, TestData_xgb, type = "response")
-predicted_class <- matrix(predicted_class_raw,
-                          nrow = 3,
-                          ncol = length(predicted_class) / 3) %>%
-  t() %>%
-  data.frame() %>%
-  mutate(label = TrainingData$Sentiment[-id_train] + 2,
-         max_prob = max.col(., "last"))
+predicted_class_matrix<-t(matrix(predicted_class_raw,
+       nrow = 3,
+       ncol = length(predicted_class_raw) / 3))
+predicted_class<-max.col(predicted_class_matrix)-2
 
 #Evaluate the model
 #
+#Get real values
+actual_class <- TrainingData$Sentiment[-id_train]
 #Create contingency table and confusion matrix
-cm<-confusionMatrix(table(predicted_class$label,predicted_class$max_prob), mode = "everything")
+cm<-confusionMatrix(table(actual_class,predicted_class), mode = "everything")
 #Calculate Krippendorffs Alpha, especially for ordered classes
 for_kripp<-as.matrix(rbind(predicted_class$label,actual_class$max_prob))
 krippends<-kripp.alpha(for_kripp,'ordinal')

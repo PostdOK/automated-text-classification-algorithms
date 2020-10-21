@@ -54,7 +54,7 @@ XGBmodel <-
 predicted_class_raw <- predict(XGBmodel, TestData_xgb, type = "response")
 predicted_class <- matrix(predicted_class_raw,
                           nrow = 3,
-                          ncol = length(pred) / 3) %>%
+                          ncol = length(predicted_class) / 3) %>%
   t() %>%
   data.frame() %>%
   mutate(label = TrainingData$Sentiment[-id_train] + 2,

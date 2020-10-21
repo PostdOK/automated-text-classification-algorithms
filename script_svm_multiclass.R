@@ -16,11 +16,9 @@ TrainingDataCorpus <-
   tm_map(TrainingDataCorpus, removeWords, stopwords_complete)
 TrainingDataCorpus <- tm_map(TrainingDataCorpus, removeNumbers)
 #Conver to document term matrix and then to a data frame that can be handeled by classification algorithms
-rawDTM <- DocumentTermMatrix(TrainingDataCorpus)
-DTM.df <- as.data.frame(as.matrix(rawDTM))
-colnames(DTM.df) <-
-  make.names(colnames(DTM.df), unique = TRUE)
+DTM.df <- as.data.frame(as.matrix(DocumentTermMatrix(TrainingDataCorpus)))
 TrainingDTM <- cbind(Coding = TrainingData$Sentiment, DTM.df)
+
 #draw samples
 id_train <-
   sample(1:nrow(TrainingDTM), round(0.75 * nrow(TrainingDTM), 0), replace = FALSE)
@@ -40,8 +38,7 @@ predicted_class <- predict(SVMmodel, na.omit(TestDTM))
 #Get real values
 actual_class <- TestDTM$Coding
 #Create contingency table and confusion matrix
-conTable <- table(actual_class, predicted_class)
-cm <- confusionMatrix(conTable, mode = "everything")
+cm <- confusionMatrix(table(actual_class, predicted_class), mode = "everything")
 #Calculate Krippendorffs Alpha, especially for ordered classes
 for_kripp<-as.matrix(rbind(predicted_class,actual_class))
 krippends<-kripp.alpha(for_kripp,'ordinal')
